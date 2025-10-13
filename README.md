@@ -71,7 +71,7 @@ python fetch_nasa_epic.py --api_key <API_KEY> --count 5 --save_folder images
 
 ### Пример запуска
 ```bash
-python fetch_spacex_images.py --api_url https://api.spacexdata.com/v5/launches/5eb87d47ffd86e000604b3
+python fetch_spacex_images.py --api_url 
 ```
 
 ## Скрипт №5: Проверка публикации фото в Telegram
