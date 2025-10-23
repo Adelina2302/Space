@@ -2,17 +2,8 @@ import os
 import requests
 from urllib.parse import urlsplit, unquote
 from datetime import datetime
+from download_tools import download_image
 
-def download_image(url, save_path):
-    folder = os.path.dirname(save_path)
-    if folder and not os.path.exists(folder):
-        os.makedirs(folder)
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    with open(save_path, "wb") as file:
-        file.write(response.content)
-    print(f"Картинка сохранена: {save_path}")
 
 def get_file_extension(url):
     path = urlsplit(url).path
@@ -20,12 +11,14 @@ def get_file_extension(url):
     _, ext = os.path.splitext(filename)
     return ext
 
+
 def fetch_hubble():
     save_folder = r"C:\sputnik_lesson#2\images"
     hubble_url = "https://upload.wikimedia.org/wikipedia/commons/3/3f/HST-SM4.jpeg"
     ext = get_file_extension(hubble_url)
     save_path = os.path.join(save_folder, f"hubble{ext}")
     download_image(hubble_url, save_path)
+
 
 def fetch_spacex_last_launch():
     save_folder = r"C:\sputnik_lesson#2\images"
@@ -42,6 +35,7 @@ def fetch_spacex_last_launch():
             filename = f"spacex{i}{ext}"
             save_path = os.path.join(save_folder, filename)
             download_image(link, save_path)
+
 
 def fetch_multiple_apod(api_key, count=30):
     save_folder = r"C:\sputnik_lesson#2\images"
@@ -71,6 +65,7 @@ def fetch_multiple_apod(api_key, count=30):
         except Exception as e:
             print(f"Ошибка при скачивании или сохранении картинки {i}: {e}")
 
+
 def fetch_epic_latest(api_key):
     api_url = f"https://api.nasa.gov/EPIC/api/natural/images?api_key={api_key}"
     try:
@@ -98,6 +93,7 @@ def fetch_epic_latest(api_key):
         print(epic_url)
         return epic_url
 
+
 def fetch_multiple_epic(api_key, count=10):
     save_folder = r"C:\sputnik_lesson#2\images"
     api_url = f"https://api.nasa.gov/EPIC/api/natural/images?api_key={api_key}"
@@ -115,7 +111,7 @@ def fetch_multiple_epic(api_key, count=10):
 
     for i, photo in enumerate(data[:count], start=1):
         image_name = photo["image"]
-        date_str = photo["date"]  # формат: "YYYY-MM-DD HH:MM:SS"
+        date_str = photo["date"]
         date = datetime.fromisoformat(date_str)
         year, month, day = date.year, f"{date.month:02}", f"{date.day:02}"
 
@@ -126,12 +122,11 @@ def fetch_multiple_epic(api_key, count=10):
         except Exception as e:
             print(f"Ошибка при скачивании {img_url}: {e}")
 
-# Запуск всех заданий
+
 if __name__ == "__main__":
     api_key = "5OKv9XCdUJNe4vgC8rzYZSXq4Vcm9TKOjmcbptI6"
-
     fetch_hubble()
     fetch_spacex_last_launch()
     fetch_multiple_apod(api_key, count=30)
     fetch_epic_latest(api_key)
-    fetch_multiple_epic(api_key, count=10)  # Новая функция для массового скачивания EPIC
+    fetch_multiple_epic(api_key, count=10)

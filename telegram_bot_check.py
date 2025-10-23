@@ -1,20 +1,31 @@
 import os
 import telegram
 from dotenv import load_dotenv
+from telegram.error import TelegramError
 
 
-load_dotenv()
+def send_photo(bot: telegram.Bot, chat_id: str, photo_path: str) -> bool:
+    try:
+        with open(photo_path, 'rb') as photo:
+            bot.send_photo(chat_id=chat_id, photo=photo)
+        print(f"Картинка {photo_path} отправлена в канал!")
+        return True
+    except (FileNotFoundError, PermissionError, OSError) as e:
+        print(f"Ошибка при работе с файлом {photo_path}: {e}")
+    except TelegramError as e:
+        print(f"Ошибка при отправке фото {photo_path}: {e}")
+    return False
 
-TOKEN = os.getenv("TOKEN")
-CHANNEL_CHAT_ID = os.getenv("CHAT_ID")
-PHOTO_PATH = os.getenv("PHOTO_PATH")
+
+def main():
+    load_dotenv()
+    TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
+    TG_CHAT_ID = os.environ["TG_CHAT_ID"]
+    TG_PHOTO_PATH = os.getenv("TG_PHOTO_PATH", "default.jpg")
+
+    bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    send_photo(bot, TG_CHAT_ID, TG_PHOTO_PATH)
 
 
-if not TOKEN or not CHANNEL_CHAT_ID or not PHOTO_PATH:
-    raise ValueError("Не заданы переменные окружения")
-
-bot = telegram.Bot(token=TOKEN)
-with open(PHOTO_PATH, 'rb') as photo:
-    bot.send_photo(chat_id=CHANNEL_CHAT_ID, photo=photo)
-
-print('Картинка отправлена в канал!')
+if __name__ == "__main__":
+    main()

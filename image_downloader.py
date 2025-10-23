@@ -4,8 +4,8 @@ from urllib.parse import urlsplit, unquote
 
 def download_image(url, save_path):
     folder = os.path.dirname(save_path)
-    if folder and not os.path.exists(folder):
-        os.makedirs(folder)
+    if folder:
+        os.makedirs(folder, exist_ok=True)
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
