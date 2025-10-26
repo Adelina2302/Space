@@ -9,10 +9,6 @@ from datetime import datetime
 from urllib.parse import quote
 
 
-def create_session():
-    return requests.Session()
-
-
 def fetch_epic_metadata(api_key, session):
     base_api_url = "https://api.nasa.gov/EPIC/api/natural/images"
     params = {"api_key": api_key}
@@ -59,7 +55,7 @@ def download_epic_images(urls_with_params, save_folder):
 
 
 def fetch_multiple_epic(api_key, count=5, save_folder="images"):
-    session = create_session()
+    session = requests.Session()  # ← заменили вызов create_session()
     urls_with_params = get_epic_image_urls(api_key, count, session)
     download_epic_images(urls_with_params, save_folder)
 
