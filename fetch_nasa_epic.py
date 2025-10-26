@@ -21,13 +21,13 @@ def fetch_epic_metadata(api_key, session):
     return response.json()
 
 
-def build_epic_image_url(image_name, date_str, api_key):
+def build_epic_image_url(image_name, date_str):
     date = datetime.fromisoformat(date_str)
     year = date.year
     month = f"{date.month:02d}"
     day = f"{date.day:02d}"
     quoted_image = quote(image_name, safe="")
-    return f"https://api.nasa.gov/EPIC/archive/natural/{year}/{month}/{day}/png/{quoted_image}.png?api_key={api_key}"
+    return f"https://api.nasa.gov/EPIC/archive/natural/{year}/{month}/{day}/png/{quoted_image}.png"
 
 
 def prepare_save_path(save_folder, index):
@@ -42,21 +42,26 @@ def get_epic_image_urls(api_key, count, session):
     for photo in data[:count]:
         image_name = photo["image"]
         date_str = photo["date"]
-        urls.append(build_epic_image_url(image_name, date_str, api_key))
+        urls.append((build_epic_image_url(image_name, date_str), {"api_key": api_key}))
     return urls
 
 
-def download_epic_images(urls, save_folder):
+def download_epic_images(urls_with_params, save_folder):
     os.makedirs(save_folder, exist_ok=True)
-    for i, url in enumerate(urls, start=1):
+    session = requests.Session()
+    for i, (url, params) in enumerate(urls_with_params, start=1):
+        response = session.get(url, params=params, timeout=10)
+        response.raise_for_status()
         save_path = prepare_save_path(save_folder, i)
-        download_image(url, save_path)
+        with open(save_path, "wb") as file:
+            file.write(response.content)
+        print(f"Скачано: {save_path}")
 
 
 def fetch_multiple_epic(api_key, count=5, save_folder="images"):
     session = create_session()
-    urls = get_epic_image_urls(api_key, count, session)
-    download_epic_images(urls, save_folder)
+    urls_with_params = get_epic_image_urls(api_key, count, session)
+    download_epic_images(urls_with_params, save_folder)
 
 
 def main(argv=None):
