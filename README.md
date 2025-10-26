@@ -54,8 +54,8 @@ pip install -r requirements.txt
 ```env
 # .env - пример
 TELEGRAM_TOKEN=<Ваш Telegram бот токен>
-TG_CHAT_ID=@my_channel_or_chat_id
-TG_PHOTO_PATH=images/sample.jpg
+TELEGRAM_CHAT_ID=@my_channel_or_chat_id
+TELEGRAM_PHOTO_PATH=images/sample.jpg
 ```
 
 Примечание:
