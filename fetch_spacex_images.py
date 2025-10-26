@@ -1,13 +1,7 @@
 import requests
 import argparse
-from pathlib import Path
+from save_tools import create_save_dir  
 from image_downloader import download_image, get_file_extension
-
-
-def create_save_dir(save_folder: str) -> Path:
-    save_dir = Path(save_folder or "images")
-    save_dir.mkdir(parents=True, exist_ok=True)
-    return save_dir
 
 
 def fetch_spacex_data(api_url: str) -> dict:
@@ -22,7 +16,7 @@ def extract_photo_links(data: dict) -> list[str]:
     return data.get("links", {}).get("flickr", {}).get("original", []) or []
 
 
-def save_spacex_photos(photo_links: list[str], save_dir: Path):
+def save_spacex_photos(photo_links: list[str], save_dir):
     if not photo_links:
         print("Фотографий SpaceX нет.")
         return

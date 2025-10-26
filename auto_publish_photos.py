@@ -5,6 +5,7 @@ import argparse
 import telegram
 from telegram.error import TelegramError
 from typing import List, Tuple
+from save_tools import send_photo 
 
 MAX_FILE_SIZE = 20_000_000
 MAX_FILE_SIZE_MB = MAX_FILE_SIZE / 1_000_000
@@ -36,24 +37,11 @@ def filter_valid_photos(photo_files: List[str]) -> List[str]:
     return valid_photos
 
 
-def send_photo(bot: telegram.Bot, chat_id: str, photo_path: str) -> bool:
-    try:
-        with open(photo_path, 'rb') as photo:
-            bot.send_photo(chat_id=chat_id, photo=photo)
-        print(f"Опубликовано: {photo_path}")
-        return True
-    except (FileNotFoundError, PermissionError, OSError) as e:
-        print(f"Ошибка при работе с файлом {photo_path}: {e}")
-    except TelegramError as e:
-        print(f"Ошибка отправки {photo_path} в Telegram: {e}")
-    return False
-
-
 def publish_photo_batch(bot: telegram.Bot, chat_id: str, photo_files: List[str], interval: int):
     random.shuffle(photo_files)
     valid_photos = filter_valid_photos(photo_files)
     for photo_path in valid_photos:
-        send_photo(bot, chat_id, photo_path)
+        send_photo(bot, chat_id, photo_path, success_message=f"Опубликовано: {photo_path}")
         time.sleep(interval)
 
 

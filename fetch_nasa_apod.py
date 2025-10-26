@@ -2,12 +2,8 @@ import argparse
 import os
 import sys
 import requests
+from save_tools import create_save_dir  
 from image_downloader import download_image, get_file_extension
-
-
-def create_save_folder(save_folder: str) -> str:
-    os.makedirs(save_folder, exist_ok=True)
-    return save_folder
 
 
 def fetch_apod_data(api_key: str, count: int) -> list[dict]:
@@ -37,7 +33,7 @@ def save_apod_images(urls: list[str], save_folder: str):
 
 
 def fetch_multiple_apod(api_key: str, count=5, save_folder="images"):
-    save_dir = create_save_folder(save_folder)
+    save_dir = create_save_dir(save_folder)
     data_list = fetch_apod_data(api_key, count)
     urls = extract_image_urls(data_list)
     save_apod_images(urls, save_dir)
