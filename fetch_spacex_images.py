@@ -10,14 +10,10 @@ def create_save_dir(save_folder: str) -> Path:
     return save_dir
 
 
-def fetch_spacex_data(api_url: str) -> dict | None:
-    try:
-        response = requests.get(api_url, timeout=10)
-        response.raise_for_status()
-        return response.json()
-    except requests.RequestException as exc:
-        print(f"Ошибка при запросе API: {exc}")
-        return None
+def fetch_spacex_data(api_url: str) -> dict:
+    response = requests.get(api_url, timeout=10)
+    response.raise_for_status()
+    return response.json()
 
 
 def extract_photo_links(data: dict) -> list[str]:
@@ -35,11 +31,7 @@ def save_spacex_photos(photo_links: list[str], save_dir: Path):
         sanitized_link = link.replace("\\", "/")
         ext = get_file_extension(sanitized_link)
         save_path = save_dir / f"spacex{i}{ext}"
-
-        try:
-            download_image(sanitized_link, str(save_path))
-        except Exception as exc:
-            print(f"Не удалось скачать {sanitized_link} -> {save_path}: {exc}")
+        download_image(sanitized_link, str(save_path))
 
     print(f"Скачано {len(photo_links)} фото в {save_dir}")
 
@@ -57,7 +49,12 @@ def main():
     parser.add_argument("--save_folder", default="images", help="Папка для сохранения фото")
     args = parser.parse_args()
 
-    fetch_spacex_images(args.api_url, args.save_folder)
+    try:
+        fetch_spacex_images(args.api_url, args.save_folder)
+    except requests.RequestException as exc:
+        print(f"Ошибка при запросе API: {exc}")
+    except Exception as exc:
+        print(f"Произошла непредвиденная ошибка: {exc}")
 
 
 if __name__ == "__main__":
