@@ -9,7 +9,7 @@
   - fetch_spacex_images.py — скачивание фото из ответа API SpaceX (для конкретного запуска)
   - telegram_bot_check.py — утилита для проверки отправки одной фотографии через бота
   - image_downloader.py — функции для скачивания изображений (используются в других скриптах)
-  - get_pic.py — вспомогательный/тестовый скрипт (примеры старых реализаций)
+  - requirements.txt — список зависимостей проекта  
 - Минимальные требования: Python 3.8+
 
 Содержание
@@ -39,7 +39,7 @@ pip install -r requirements.txt
 
 Рекомендуемый requirements.txt (в корне проекта):
 - requests
-- python-telegram-bot (или telegram — в коде используется telegram)
+- python-telegram-bot 
 - python-dotenv
 
 
@@ -123,7 +123,7 @@ python fetch_nasa_epic.py --api_key YOUR_NASA_API_KEY --count 5 --save_folder im
 - Пример (последний запуск можно получить на API SpaceX или указать конкретный запуск):
 
 ```bash
-python fetch_spacex_images.py --api_url "https://api.spacexdata.com/v5/launches/5eb87d47ffd86e000604b38a" --save_folder images
+python fetch_spacex_images.py --api_url YOUR_NASA_API_KEY --save_folder images
 ```
 
 - Выход: spacex1.jpg, spacex2.jpg и т.д.
